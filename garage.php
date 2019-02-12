@@ -1,6 +1,7 @@
 <?php
 
-require("includes/Garage.php");
+require_once("includes/Garage.php");
+require_once("includes/Lot.php");
 
 // create Neversvägen garage
 $neversvagen = new Garage(24);
@@ -51,3 +52,5 @@ for ($i = 1; $i <= $total_lots; $i++) {
 	}
 	echo "<br />";
 }
+
+var_dump($neversvagen);

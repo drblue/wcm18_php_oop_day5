@@ -1,5 +1,7 @@
 <?php
 
+require_once("includes/Lot.php");
+
 class Garage {
 
 	/**
@@ -10,13 +12,6 @@ class Garage {
 	protected $lots = [];
 
 	/**
-	 * Total number of parking lots in the garage.
-	 *
-	 * @var int
-	 */
-	protected $total_nbr_of_lots;
-
-	/**
 	 * Create a new Garage.
 	 *
 	 * @param int $nbr_of_lots Number of lots that this Garage should have
@@ -24,9 +19,8 @@ class Garage {
 	public function __construct($nbr_of_lots) {
 		// $nbr_of_lots = 28
 		for ($lot_nbr = 1; $lot_nbr <= $nbr_of_lots; $lot_nbr++) {
-			$this->lots[$lot_nbr] = false;
+			$this->lots[$lot_nbr] = new Lot();
 		}
-		$this->total_nbr_of_lots = $nbr_of_lots;
 	}
 
 	/**
@@ -37,7 +31,7 @@ class Garage {
 	 */
 	public function isOccupied($lot_nbr) {
 		if (isset($this->lots[$lot_nbr])) {
-			return $this->lots[$lot_nbr];
+			return $this->lots[$lot_nbr]->isOccupied();
 		}
 		trigger_error("Den där parkingsplatsen finns minsann inte!", E_USER_WARNING);
 	}
@@ -55,22 +49,12 @@ class Garage {
 	}
 
 	/**
-	 * Get total number of available lots.
+	 * Get total number of lots.
 	 *
 	 * @return int
 	 */
 	public function getNumberOfLots() {
-		return $this->total_nbr_of_lots;
-	}
-
-	/**
-	 * Mark a parking lot as occupied.
-	 *
-	 * @param int $lot_nbr Parking lot number
-	 * @return void
-	 */
-	protected function allocate($lot_nbr) {
-		$this->lots[$lot_nbr] = true;
+		return count($this->lots);
 	}
 
 	/**
@@ -80,12 +64,13 @@ class Garage {
 	 * @return boolean true if successful
 	 */
 	public function park($lot_nbr) {
-		if ($this->isFree($lot_nbr)) {
-			$this->allocate($lot_nbr);
-			return true;
+		$lot = $this->lots[$lot_nbr];
+		if ($lot->isOccupied()) {
+			return false;
 		}
-		// körs bara om den INTE var ledig
-		return false;
+
+		$lot->setAsOccupied();
+		return true;
 	}
 
 	/**
